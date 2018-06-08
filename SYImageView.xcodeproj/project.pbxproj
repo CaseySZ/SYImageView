@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1185695120CA1E6A00093207 /* UIImage+Bitmap.m in Sources */ = {isa = PBXBuildFile; fileRef = 1185695020CA1E6A00093207 /* UIImage+Bitmap.m */; };
 		3D86D8421F8F105D00D40DAA /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D86D8411F8F105D00D40DAA /* AppDelegate.m */; };
 		3D86D8451F8F105D00D40DAA /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D86D8441F8F105D00D40DAA /* ViewController.m */; };
 		3D86D8481F8F105D00D40DAA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3D86D8461F8F105D00D40DAA /* Main.storyboard */; };
@@ -19,6 +20,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1185694F20CA1E6900093207 /* UIImage+Bitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Bitmap.h"; sourceTree = "<group>"; };
+		1185695020CA1E6A00093207 /* UIImage+Bitmap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Bitmap.m"; sourceTree = "<group>"; };
 		3D86D83D1F8F105D00D40DAA /* SYImageView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SYImageView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D86D8401F8F105D00D40DAA /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		3D86D8411F8F105D00D40DAA /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -86,6 +89,8 @@
 		3D86D8561F8F10B300D40DAA /* SYImageView */ = {
 			isa = PBXGroup;
 			children = (
+				1185694F20CA1E6900093207 /* UIImage+Bitmap.h */,
+				1185695020CA1E6A00093207 /* UIImage+Bitmap.m */,
 				3D86D8571F8F10B300D40DAA /* EOCLoadImageOperation.h */,
 				3D86D8581F8F10B300D40DAA /* EOCLoadImageOperation.m */,
 				3D86D8591F8F10B300D40DAA /* UIImageView+AsyLoad.h */,
@@ -171,6 +176,7 @@
 				3D86D85C1F8F10B300D40DAA /* UIImageView+AsyLoad.m in Sources */,
 				3D86D8501F8F105D00D40DAA /* main.m in Sources */,
 				3D86D8421F8F105D00D40DAA /* AppDelegate.m in Sources */,
+				1185695120CA1E6A00093207 /* UIImage+Bitmap.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

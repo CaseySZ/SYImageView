@@ -8,21 +8,21 @@
 
 #import "EOCLoadImageOperation.h"
 #import "UIImageView+AsyLoad.h"
+#import "UIImage+Bitmap.h"
+
 #import <CommonCrypto/CommonDigest.h>
 
-#define RootDocument ([NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject])
+#define RootDocument ([NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject])
 #define SYImageCacheDocument [RootDocument stringByAppendingPathComponent:@"SYImageCacheDocument"]
 
 typedef BOOL (^cancelBlock)(void);
 
 static NSMutableDictionary *__operationTaskInfoDict;
-static NSMutableArray *__eocSameTaskCacheAry;
 static NSLock *__taskLock;
+static NSCache *_imageCahe;
+
 @interface EOCLoadImageOperation (){
 }
-
-
-@property (nonatomic, strong)NSData *netData;
 
 
 @end
@@ -36,8 +36,8 @@ static NSLock *__taskLock;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         __operationTaskInfoDict = [NSMutableDictionary new];
-        __eocSameTaskCacheAry = [NSMutableArray new];
         __taskLock = [NSLock new];
+        _imageCahe = [NSCache new];
         [self createCacheDocument];
     });
 
@@ -61,14 +61,13 @@ static NSLock *__taskLock;
         NSError *error = nil;
         [url setResourceValue:[NSNumber numberWithBool:YES] forKey:NSURLIsExcludedFromBackupKey error:&error];//避免缓存数据 被备份到iclouds
         if (error) {
-            NSLog(@"没有成功的设置 ‘应用不能备份的属性’, error = %@", error);
+         
         }
     }
 }
 
-- (void)start{
+- (void)main{
     
-    atomic_size_t value = [self.eocImageV.monitorValue intValue];
     typeof(self) __weakSelf = self;
     cancelBlock isCancelBlock = ^BOOL() {
         
@@ -77,112 +76,110 @@ static NSLock *__taskLock;
             cancel = YES;
         }else{
             
-            if (__weakSelf.eocImageV.urlStr != self.urlStr && value != [__weakSelf.eocImageV.monitorValue intValue]) {
+            if (__weakSelf.eocImageV.urlStr != __weakSelf.urlStr) {
                 cancel = YES;
             }
         }
         if (cancel) {
-            NSLog(@"取消了");
+           
         }
         return cancel;
     };
     
-    if ([__operationTaskInfoDict objectForKey:_urlStr]) {
-       
-        [__taskLock lock];
-        NSValue *taskValue = [NSValue valueWithNonretainedObject:self.eocImageV];
-        [__eocSameTaskCacheAry addObject:taskValue];
-        [__taskLock unlock];
-        
-        [self finishStatus];
-        return;
-        
-    }else{
-        
-        [__operationTaskInfoDict setObject:@"" forKey:_urlStr];
-    }
-    
     UIImage *bitmapImage = nil;
     NSData *imageData = [self findUrlDataInLocal];
-    if (imageData) {
+    if (imageData && imageData.length > 1000) {
+        
         bitmapImage = [UIImage imageWithData:imageData];
-        if (!isCancelBlock()){
+        if (!isCancelBlock() && bitmapImage){
             [self loadImageInMainThead:bitmapImage];
         }
+        
     }else{
         
-        [self synLoadImageNet:isCancelBlock bitmapImage:&bitmapImage];
+        if ([__operationTaskInfoDict objectForKey:_urlStr]) {
+            
+            [__taskLock lock];
+            NSMutableArray *sameTaskArray = [__operationTaskInfoDict objectForKey:_urlStr];
+            if (self.eocImageV) {
+                [sameTaskArray addObject:self.eocImageV];
+            }
+            [__taskLock unlock];
+            
+            [self finishStatus];
+            return;
+            
+        }else{
+            
+            [__taskLock lock];
+            [__operationTaskInfoDict setObject:[NSMutableArray array] forKey:_urlStr];
+            [__taskLock unlock];
+        }
+        
+        NSData *imageData = [self synLoadImageNet];
+        UIImage *netImage = [UIImage imageWithData:imageData];
+        if (self.cutStyle == CutHorizLine) {
+            
+           // bitmapImage = [netImage eocBitmapInSizeAndCutHorizLine:self.eocImageV.frame.size];
+        }else{
+            
+            bitmapImage = [netImage eocBitmapStyleImage];
+        }
+        
+        [self removeTaskAndExcuteTask:bitmapImage];
+        
+        [self saveImageData:UIImageJPEGRepresentation(bitmapImage, 1)];
+        if (!isCancelBlock() && bitmapImage) {
+            [self loadImageInMainThead:bitmapImage];
+        }
     }
     
     
-    [self removeTaskAndExcuteTask:bitmapImage];
     [self finishStatus];
     
 }
 
 - (void)removeTaskAndExcuteTask:(UIImage *)bitmapImage{
   
-    NSMutableArray *deleteTaskAry = [NSMutableArray new];
-    NSMutableArray *excuteTaskAry = [NSMutableArray new];
+   
     [__taskLock lock];
-    for (int i = 0; i < __eocSameTaskCacheAry.count; i++) {
-        
-        NSValue *taskV = __eocSameTaskCacheAry[i];
-        UIImageView *ecoImageV = taskV.nonretainedObjectValue;
-        if (!ecoImageV) {
-            [deleteTaskAry addObject:taskV];
-        }else{
-            
-            if ([ecoImageV.urlStr isEqualToString:self.urlStr]) {
-                [excuteTaskAry addObject:taskV];
-            }
-            
-        }
-        
-    }
-    
-    for (int i = 0; i < deleteTaskAry.count; i++) {
-        [__eocSameTaskCacheAry removeObject:deleteTaskAry[i]];
-    }
-    
-    for (int i = 0; i < excuteTaskAry.count; i++) {
-        [__eocSameTaskCacheAry removeObject:excuteTaskAry[i]];
-    }
+    NSArray *sameTaskArr = [__operationTaskInfoDict objectForKey:_urlStr];
+    [__operationTaskInfoDict removeObjectForKey:_urlStr];
     [__taskLock unlock];
     
-    for (int i = 0; i < excuteTaskAry.count; i++) {
+    for (int i = 0; i < sameTaskArr.count; i++) {
         
-        NSValue *taskV = excuteTaskAry[i];
-        UIImageView *ecoImageV = taskV.nonretainedObjectValue;
-        if (ecoImageV && ecoImageV != self.eocImageV) {
+        UIImageView *ecoImageV = sameTaskArr[i];
+        if ([ecoImageV isKindOfClass:[UIImageView class]] && [ecoImageV.urlStr isEqualToString:self.urlStr]) {
+
+            
             dispatch_async(dispatch_get_main_queue(), ^{
-                ecoImageV.layer.contents = (__bridge id)bitmapImage.CGImage;// bitmap
+                if (![ecoImageV.image isEqual:bitmapImage]) {
+                   ecoImageV.image = bitmapImage;
+                }
             });
         }
     }
-    
-    [deleteTaskAry removeAllObjects];
-    [excuteTaskAry removeAllObjects];
     
 }
 
 
 
-- (void)synLoadImageNet:(cancelBlock)isCancelBlock bitmapImage:(UIImage**)bitmapImage{
+- (NSData*)synLoadImageNet{
 
     NSURL *url = [NSURL URLWithString:_urlStr];
     
     NSURLSession *session = [NSURLSession  sessionWithConfiguration:[NSURLSessionConfiguration ephemeralSessionConfiguration]];
     dispatch_semaphore_t sem = dispatch_semaphore_create(0);
     
-    typeof(self) __weakSelf = self;
+    __block NSData *imageData = nil;
     NSURLSessionTask *task = [session dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         
         NSHTTPURLResponse *httpRespone = (NSHTTPURLResponse*)response;
         if (error || [httpRespone statusCode] == 404) {
             NSLog(@"网络错误error：%@", error);
         }else{
-            __weakSelf.netData = data;
+            imageData = data;
         }
         
         dispatch_semaphore_signal(sem);
@@ -191,15 +188,9 @@ static NSLock *__taskLock;
     [task resume];
     dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     
-    if (self.netData) {
-        
-        *bitmapImage = [self eocBitmapStyleImageFromImageData:self.netData];
-        [self saveImageData:UIImageJPEGRepresentation(*bitmapImage, 1)];
-        
-    }
-    if (!isCancelBlock()) {
-        [self loadImageInMainThead:*bitmapImage];
-    }
+    return imageData;
+    
+   
 }
 
 
@@ -207,11 +198,18 @@ static NSLock *__taskLock;
 - (void)loadImageInMainThead:(UIImage*)image{
     
     typeof(self) __weakSelf = self;
+    
     dispatch_async(dispatch_get_main_queue(), ^{
-       
-        if (__weakSelf.eocImageV) {
+        
+        if ([__weakSelf.eocImageV.image isEqual:image]) {
+            return;
+        }
+        if (__weakSelf.eocImageV && image) {
             __weakSelf.eocImageV.image = image;
-            //__weakSelf.eocImageV.layer.contents = (__bridge id)image.CGImage;
+            [__weakSelf.eocImageV setNeedsDisplay];
+        }
+        if (__weakSelf.finishBlock) {
+            __weakSelf.finishBlock(image);
         }
     });
 }
@@ -220,57 +218,40 @@ static NSLock *__taskLock;
     
     [self willChangeValueForKey:@"isFinish"];
     _finished = YES;
-    [__operationTaskInfoDict removeObjectForKey:_urlStr];
     [self didChangeValueForKey:@"isFinish"];
     
 }
 
-
-- (UIImage *)eocBitmapStyleImageFromImageData:(NSData*)imageData{
-    
-    UIImage *netImage = [UIImage imageWithData:imageData];
-    CGImageRef imageRef = netImage.CGImage;
-    size_t width = CGImageGetWidth(imageRef);
-    size_t height = CGImageGetHeight(imageRef);
-    
-    CGColorSpaceModel imageColorSpaceModel = CGColorSpaceGetModel(CGImageGetColorSpace(imageRef));
-    CGColorSpaceRef colorspaceRef = CGImageGetColorSpace(imageRef);
-    bool unsupportedColorSpace = (imageColorSpaceModel == 0 || imageColorSpaceModel == -1 || imageColorSpaceModel == kCGColorSpaceModelCMYK || imageColorSpaceModel == kCGColorSpaceModelIndexed);
-    if (unsupportedColorSpace)
-        colorspaceRef = CGColorSpaceCreateDeviceRGB();
-    
-    CGContextRef contextRef =  CGBitmapContextCreate(NULL, width, height,
-                                                     CGImageGetBitsPerComponent(imageRef),
-                                                     CGImageGetBytesPerRow(imageRef),
-                                                     colorspaceRef,
-                                                     CGImageGetBitmapInfo(imageRef));
-    
-    CGContextDrawImage(contextRef, CGRectMake(0, 0, width, height), imageRef);
-    CGImageRef backImageRef = CGBitmapContextCreateImage(contextRef);
-    
-    UIImage *bitmapImage = [UIImage imageWithCGImage:backImageRef scale:[UIScreen mainScreen].scale orientation:netImage.imageOrientation];
-    
-    CFRelease(backImageRef);
-    UIGraphicsEndImageContext();
-    
-    return bitmapImage;
-    
-   
-    
-}
-
-
-
 - (NSData*)findUrlDataInLocal{
     
-    NSString *filePath = [SYImageCacheDocument stringByAppendingPathComponent:[self md5FromStr:_urlStr]];
-    return [NSData dataWithContentsOfFile:filePath];
+    NSString *urlKeyStr = _urlStr;
+    if (self.cutStyle > 0) {
+        urlKeyStr = [urlKeyStr stringByAppendingFormat:@"%@", @(self.cutStyle)];
+    }
+    NSString *fileKey = [self md5FromStr:urlKeyStr];
+    
+    if ([_imageCahe objectForKey:fileKey]) {
+        return [_imageCahe objectForKey:fileKey];
+    }
+    
+    NSString *filePath = [SYImageCacheDocument stringByAppendingPathComponent:fileKey];
+    NSData *imageData = [NSData dataWithContentsOfFile:filePath];
+    return imageData;
     
 }
 
 - (void)saveImageData:(NSData*)imageData{
     
-    NSString * filePath = [SYImageCacheDocument stringByAppendingPathComponent:[self md5FromStr:_urlStr]];
+    NSString *urlKeyStr = _urlStr;
+    if (self.cutStyle > 0) {
+        urlKeyStr = [urlKeyStr stringByAppendingFormat:@"%@", @(self.cutStyle)];
+    }
+    NSString *fileKey = [self md5FromStr:urlKeyStr];
+    if (!imageData) {
+        imageData = [NSData data];
+    }
+    [_imageCahe setObject:imageData forKey:fileKey];
+    NSString * filePath = [SYImageCacheDocument stringByAppendingPathComponent:fileKey];
     [imageData writeToFile:filePath atomically:YES];
     
 }

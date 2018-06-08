@@ -18,7 +18,7 @@ static NSOperationQueue *_eocImageOpQueue;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _eocImageOpQueue = [NSOperationQueue new];
-        _eocImageOpQueue.maxConcurrentOperationCount = 2;
+        _eocImageOpQueue.maxConcurrentOperationCount = 5;
     });
 }
 
@@ -51,7 +51,28 @@ static char __syUrlImage;
     [self loadImageWithURL:urlStr block:nil];
 }
 
+- (void)loadImageNormalScaleHeightWithURL:(NSString *)urlStr{
+    
+    [self loadImageWithURL:urlStr cutOut:CutHorizLine block:nil];
+    
+}
+
+
+- (void)loadImageWithURL:(NSString*)urlStr defaultImage:(UIImage*)image{
+    
+    if (!self.image) {
+        self.image = image;
+    }
+    [self loadImageWithURL:urlStr block:nil];
+}
+
 - (void)loadImageWithURL:(NSString*)urlStr block:(EOCImageFinishBlock)imageBlock{
+    
+    [self loadImageWithURL:urlStr cutOut:CutNone block:imageBlock];
+}
+
+
+- (void)loadImageWithURL:(NSString*)urlStr cutOut:(ImageCutStyle)cutStyle block:(EOCImageFinishBlock)imageBlock{
     
     if (!urlStr || urlStr.length < 10) {
         return;
@@ -67,7 +88,10 @@ static char __syUrlImage;
     loadImageOp.eocImageV = self;
     loadImageOp.urlStr = urlStr;
     loadImageOp.finishBlock = imageBlock;
+    loadImageOp.cutStyle = cutStyle;
+    
     [_eocImageOpQueue addOperation:loadImageOp];
 }
+
 
 @end
