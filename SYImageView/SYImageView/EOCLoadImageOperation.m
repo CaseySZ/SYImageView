@@ -118,13 +118,10 @@ static NSCache *_imageCahe;
         
         NSData *imageData = [self synLoadImageNet];
         UIImage *netImage = [UIImage imageWithData:imageData];
-        if (self.cutStyle == CutHorizLine) {
+        
             
-           // bitmapImage = [netImage eocBitmapInSizeAndCutHorizLine:self.eocImageV.frame.size];
-        }else{
-            
-            bitmapImage = [netImage eocBitmapStyleImage];
-        }
+        bitmapImage = [netImage eocBitmapStyleImage];
+        
         
         [self removeTaskAndExcuteTask:bitmapImage];
         
@@ -224,11 +221,7 @@ static NSCache *_imageCahe;
 
 - (NSData*)findUrlDataInLocal{
     
-    NSString *urlKeyStr = _urlStr;
-    if (self.cutStyle > 0) {
-        urlKeyStr = [urlKeyStr stringByAppendingFormat:@"%@", @(self.cutStyle)];
-    }
-    NSString *fileKey = [self md5FromStr:urlKeyStr];
+    NSString *fileKey = [self md5FromStr:_urlStr];
     
     if ([_imageCahe objectForKey:fileKey]) {
         return [_imageCahe objectForKey:fileKey];
@@ -242,11 +235,7 @@ static NSCache *_imageCahe;
 
 - (void)saveImageData:(NSData*)imageData{
     
-    NSString *urlKeyStr = _urlStr;
-    if (self.cutStyle > 0) {
-        urlKeyStr = [urlKeyStr stringByAppendingFormat:@"%@", @(self.cutStyle)];
-    }
-    NSString *fileKey = [self md5FromStr:urlKeyStr];
+    NSString *fileKey = [self md5FromStr:_urlStr];
     if (!imageData) {
         imageData = [NSData data];
     }

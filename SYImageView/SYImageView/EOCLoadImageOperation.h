@@ -21,14 +21,12 @@ typedef enum {
 
 typedef void(^EOCImageFinishBlock)(UIImage *image);
 
-@interface EOCLoadImageOperation : NSOperation
 
+
+@interface EOCLoadImageOperation : NSOperation
 
 @property (nonatomic,copy)EOCImageFinishBlock finishBlock;
 @property (nonatomic, weak)UIImageView *eocImageV;
-
-@property (nonatomic, assign)ImageCutStyle cutStyle;
-
 @property (nonatomic, strong)NSString *urlStr;
 
 

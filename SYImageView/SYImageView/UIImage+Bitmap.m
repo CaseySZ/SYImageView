@@ -15,7 +15,7 @@
     CGImageRef imageRef = self.CGImage;
     size_t width = CGImageGetWidth(imageRef);
     size_t height = CGImageGetHeight(imageRef);
-    
+
     CGColorSpaceModel imageColorSpaceModel = CGColorSpaceGetModel(CGImageGetColorSpace(imageRef));
     CGColorSpaceRef colorspaceRef = CGImageGetColorSpace(imageRef);
     BOOL unsupportedColorSpace = (imageColorSpaceModel == kCGColorSpaceModelUnknown ||
@@ -29,7 +29,7 @@
     NSUInteger bytesPerPixel = 4;
     NSUInteger bytesPerRow = bytesPerPixel * width;
     NSUInteger bitsPerComponent = 8;
-    
+    //CGBitmapInfo bitmapInfo =  CGImageGetBitmapInfo(imageRef)
     CGContextRef contextRef =  CGBitmapContextCreate(NULL, width, height,
                                                      bitsPerComponent,
                                                      bytesPerRow,
@@ -40,14 +40,16 @@
     CGImageRef backImageRef = CGBitmapContextCreateImage(contextRef);
     
     UIImage *bitmapImage = [UIImage imageWithCGImage:backImageRef scale:[UIScreen mainScreen].scale orientation:self.imageOrientation];
-    
+    if (bitmapImage == nil) {
+        NSLog(@"图片解码失败");
+    }
     if (contextRef) {
         CGContextRelease(contextRef);
     }
     if (backImageRef) {
         CFRelease(backImageRef);
     }else{
-        // http://xps-test.oss-cn-shenzhen.aliyuncs.com/article/h6CxQEDcADRWEJwtYEH8bRwwMmMb28zR.png
+        
         NSLog(@"image data");
     }
     

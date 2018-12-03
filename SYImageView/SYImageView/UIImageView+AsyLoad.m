@@ -22,62 +22,40 @@ static NSOperationQueue *_eocImageOpQueue;
     });
 }
 
-static char __syMonitorValue;
-- (void)setMonitorValue:(NSNumber*)monitorValue{
-    
-    objc_setAssociatedObject(self, &__syMonitorValue, monitorValue, OBJC_ASSOCIATION_ASSIGN);
-}
-
-- (NSNumber*)monitorValue{
-
-   return objc_getAssociatedObject(self, &__syMonitorValue);
-    
-}
-
-static char __syUrlImage;
-- (void)setUrlStr:(NSString *)urlStr{
-    
-     objc_setAssociatedObject(self, &__syUrlImage, urlStr, OBJC_ASSOCIATION_RETAIN);
-}
-
-- (NSString*)urlStr{
-    
-    return objc_getAssociatedObject(self, &__syUrlImage);
-    
-}
 
 - (void)loadImageWithURL:(NSString*)urlStr{
     
-    [self loadImageWithURL:urlStr block:nil];
+    [self loadImageWithURL:urlStr defaultImage:nil block:nil];
 }
 
-- (void)loadImageNormalScaleHeightWithURL:(NSString *)urlStr{
-    
-    [self loadImageWithURL:urlStr cutOut:CutHorizLine block:nil];
-    
-}
 
 
 - (void)loadImageWithURL:(NSString*)urlStr defaultImage:(UIImage*)image{
     
-    if (!self.image) {
-        self.image = image;
-    }
-    [self loadImageWithURL:urlStr block:nil];
+    
+    [self loadImageWithURL:urlStr defaultImage:image block:nil];
 }
 
 - (void)loadImageWithURL:(NSString*)urlStr block:(EOCImageFinishBlock)imageBlock{
     
-    [self loadImageWithURL:urlStr cutOut:CutNone block:imageBlock];
+    
+    [self loadImageWithURL:urlStr defaultImage:nil block:imageBlock];
+    
 }
 
 
-- (void)loadImageWithURL:(NSString*)urlStr cutOut:(ImageCutStyle)cutStyle block:(EOCImageFinishBlock)imageBlock{
+- (void)loadImageWithURL:(NSString*)urlStr defaultImage:(UIImage*)image block:(EOCImageFinishBlock)imageBlock{
+    
+    
     
     if (!urlStr || urlStr.length < 10) {
         return;
     }
     self.urlStr = urlStr;
+    
+    if (!self.image) {
+        self.image = image;
+    }
     
     atomic_size_t monitorV = self.monitorValue.intValue;
     atomic_fetch_add(&monitorV, 1);
@@ -88,10 +66,37 @@ static char __syUrlImage;
     loadImageOp.eocImageV = self;
     loadImageOp.urlStr = urlStr;
     loadImageOp.finishBlock = imageBlock;
-    loadImageOp.cutStyle = cutStyle;
-    
     [_eocImageOpQueue addOperation:loadImageOp];
+    
 }
+
+
+
+static char __syMonitorValue;
+- (void)setMonitorValue:(NSNumber*)monitorValue{
+    
+    objc_setAssociatedObject(self, &__syMonitorValue, monitorValue, OBJC_ASSOCIATION_ASSIGN);
+}
+
+- (NSNumber*)monitorValue{
+    
+    return objc_getAssociatedObject(self, &__syMonitorValue);
+    
+}
+
+static char __syUrlImage;
+- (void)setUrlStr:(NSString *)urlStr{
+    
+    objc_setAssociatedObject(self, &__syUrlImage, urlStr, OBJC_ASSOCIATION_RETAIN);
+}
+
+- (NSString*)urlStr{
+    
+    return objc_getAssociatedObject(self, &__syUrlImage);
+    
+}
+
+
 
 
 @end
