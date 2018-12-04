@@ -117,15 +117,19 @@ static NSCache *_imageCahe;
         }
         
         NSData *imageData = [self synLoadImageNet];
-        UIImage *netImage = [UIImage imageWithData:imageData];
         
-            
-        bitmapImage = [netImage eocBitmapStyleImage];
+     //   UIImage *bitmapImage = [imageData eocBitmapStyleImage];
         
-        
+        UIImage *bitmapImage = [UIImage imageWithData:imageData];
+        if (bitmapImage.shouldDecodeImage){
+            bitmapImage = [bitmapImage eocBitmapStyleImage];
+        }
+
         [self removeTaskAndExcuteTask:bitmapImage];
         
-        [self saveImageData:UIImageJPEGRepresentation(bitmapImage, 1)];
+        if (bitmapImage){
+            [self saveImageData:UIImageJPEGRepresentation(bitmapImage, 1)];
+        }
         if (!isCancelBlock() && bitmapImage) {
             [self loadImageInMainThead:bitmapImage];
         }

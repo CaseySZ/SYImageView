@@ -17,6 +17,9 @@
 		3D86D85B1F8F10B300D40DAA /* EOCLoadImageOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D86D8581F8F10B300D40DAA /* EOCLoadImageOperation.m */; };
 		3D86D85C1F8F10B300D40DAA /* UIImageView+AsyLoad.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D86D85A1F8F10B300D40DAA /* UIImageView+AsyLoad.m */; };
 		3D86D85F1F8F111200D40DAA /* SYAsyViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D86D85D1F8F111200D40DAA /* SYAsyViewCell.m */; };
+		9FFE6A4B992864B20C49BEDA /* libPods-SYImageView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5031CB392335C916F409D717 /* libPods-SYImageView.a */; };
+		C9E63A5421B61C030098628E /* SecondViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9E63A5221B61C030098628E /* SecondViewController.m */; };
+		C9E63A5521B61C030098628E /* SecondViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = C9E63A5321B61C030098628E /* SecondViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +41,12 @@
 		3D86D85A1F8F10B300D40DAA /* UIImageView+AsyLoad.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+AsyLoad.m"; sourceTree = "<group>"; };
 		3D86D85D1F8F111200D40DAA /* SYAsyViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SYAsyViewCell.m; sourceTree = "<group>"; };
 		3D86D85E1F8F111200D40DAA /* SYAsyViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SYAsyViewCell.h; sourceTree = "<group>"; };
+		5031CB392335C916F409D717 /* libPods-SYImageView.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SYImageView.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9E63A5121B61C030098628E /* SecondViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecondViewController.h; sourceTree = "<group>"; };
+		C9E63A5221B61C030098628E /* SecondViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SecondViewController.m; sourceTree = "<group>"; };
+		C9E63A5321B61C030098628E /* SecondViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SecondViewController.xib; sourceTree = "<group>"; };
+		D1BC9C6EF3D34B27340BCADF /* Pods-SYImageView.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SYImageView.release.xcconfig"; path = "Pods/Target Support Files/Pods-SYImageView/Pods-SYImageView.release.xcconfig"; sourceTree = "<group>"; };
+		D49B3420CFB42E680F44B91B /* Pods-SYImageView.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SYImageView.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SYImageView/Pods-SYImageView.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -45,6 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9FFE6A4B992864B20C49BEDA /* libPods-SYImageView.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -56,6 +66,8 @@
 			children = (
 				3D86D83F1F8F105D00D40DAA /* SYImageView */,
 				3D86D83E1F8F105D00D40DAA /* Products */,
+				701F6D9F48F836D290F62AD8 /* Pods */,
+				4519385D2169A7B4C3409048 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -82,6 +94,9 @@
 				3D86D84B1F8F105D00D40DAA /* LaunchScreen.storyboard */,
 				3D86D84E1F8F105D00D40DAA /* Info.plist */,
 				3D86D84F1F8F105D00D40DAA /* main.m */,
+				C9E63A5121B61C030098628E /* SecondViewController.h */,
+				C9E63A5221B61C030098628E /* SecondViewController.m */,
+				C9E63A5321B61C030098628E /* SecondViewController.xib */,
 			);
 			path = SYImageView;
 			sourceTree = "<group>";
@@ -99,6 +114,23 @@
 			path = SYImageView;
 			sourceTree = "<group>";
 		};
+		4519385D2169A7B4C3409048 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5031CB392335C916F409D717 /* libPods-SYImageView.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		701F6D9F48F836D290F62AD8 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				D49B3420CFB42E680F44B91B /* Pods-SYImageView.debug.xcconfig */,
+				D1BC9C6EF3D34B27340BCADF /* Pods-SYImageView.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -106,6 +138,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3D86D8531F8F105D00D40DAA /* Build configuration list for PBXNativeTarget "SYImageView" */;
 			buildPhases = (
+				AD65B0A2FE75182F138D48FC /* [CP] Check Pods Manifest.lock */,
 				3D86D8391F8F105D00D40DAA /* Sources */,
 				3D86D83A1F8F105D00D40DAA /* Frameworks */,
 				3D86D83B1F8F105D00D40DAA /* Resources */,
@@ -157,6 +190,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C9E63A5521B61C030098628E /* SecondViewController.xib in Resources */,
 				3D86D84D1F8F105D00D40DAA /* LaunchScreen.storyboard in Resources */,
 				3D86D84A1F8F105D00D40DAA /* Assets.xcassets in Resources */,
 				3D86D8481F8F105D00D40DAA /* Main.storyboard in Resources */,
@@ -164,6 +198,31 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		AD65B0A2FE75182F138D48FC /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SYImageView-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		3D86D8391F8F105D00D40DAA /* Sources */ = {
@@ -174,6 +233,7 @@
 				3D86D85B1F8F10B300D40DAA /* EOCLoadImageOperation.m in Sources */,
 				3D86D85F1F8F111200D40DAA /* SYAsyViewCell.m in Sources */,
 				3D86D85C1F8F10B300D40DAA /* UIImageView+AsyLoad.m in Sources */,
+				C9E63A5421B61C030098628E /* SecondViewController.m in Sources */,
 				3D86D8501F8F105D00D40DAA /* main.m in Sources */,
 				3D86D8421F8F105D00D40DAA /* AppDelegate.m in Sources */,
 				1185695120CA1E6A00093207 /* UIImage+Bitmap.m in Sources */,
@@ -308,6 +368,7 @@
 		};
 		3D86D8541F8F105D00D40DAA /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D49B3420CFB42E680F44B91B /* Pods-SYImageView.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -321,6 +382,7 @@
 		};
 		3D86D8551F8F105D00D40DAA /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D1BC9C6EF3D34B27340BCADF /* Pods-SYImageView.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;

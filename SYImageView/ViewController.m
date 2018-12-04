@@ -9,7 +9,7 @@
 #import "ViewController.h"
 #import "SYAsyViewCell.h"
 #import <CommonCrypto/CommonDigest.h>
-
+#import "SecondViewController.h"
 
 // http://xps-test.oss-cn-shenzhen.aliyuncs.com/article/h6CxQEDcADRWEJwtYEH8bRwwMmMb28zR.png // 问题图片
 
@@ -45,7 +45,7 @@
 //    //
 //    [iamgeArry addObject:@"http://img.hb.aicdn.com/ebf88b4fa5ab5d84d33b0d51a89f5fbe4ded9efe169c6-5zJhaW_fw658"];
 //    [iamgeArry addObject:@"http://img.hb.aicdn.com/d01fe4b6ec142f14fb2f13cf80f22a7356e3922110df2-8mnSCV_fw658"];
-    [iamgeArry addObject:@"http://img.hb.aicdn.com/d01fe4b6ec142f14fb2f13cf80f22a7356e3922110df2-8mnSCV_fw658"];
+//    [iamgeArry addObject:@"http://img.hb.aicdn.com/d01fe4b6ec142f14fb2f13cf80f22a7356e3922110df2-8mnSCV_fw658"];
 //    [iamgeArry addObject:@"http://img.hb.aicdn.com/d01fe4b6ec142f14fb2f13cf80f22a7356e3922110df2-8mnSCV_fw658"];
     
     NSLog(@"%@", [self md5FromStr:@"123456"]);
@@ -98,6 +98,11 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPat{
     
     
+    [self.navigationController pushViewController:[SecondViewController new] animated:YES];
+    
 }
+
+
+
 
 @end

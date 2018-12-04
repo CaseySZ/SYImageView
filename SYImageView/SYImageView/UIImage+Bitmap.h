@@ -11,7 +11,16 @@
 @interface UIImage (Bitmap)
 
 - (UIImage *)eocBitmapStyleImage;
-
+- (BOOL)shouldDecodeImage;
 
 
 @end
+
+
+@interface NSData (Bitmap)
+
+- (UIImage*)eocBitmapStyleImage;
+
+@end
+
+
