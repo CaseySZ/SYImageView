@@ -51,7 +51,9 @@
         
         NSLog(@"image data");
     }
-    
+    if (unsupportedColorSpace) {
+        CGColorSpaceRelease(colorspaceRef);
+    }
     return bitmapImage;
 }
 
@@ -104,18 +106,22 @@
             CGColorSpaceRelease(colorSpace);
             if (bmContext) {
                 CGContextDrawImage(bmContext, (CGRect){.origin.x = 0.0f, .origin.y = 0.0f, .size.width = width, .size.height = partialHeight}, partialImageRef);
+                
                 CGImageRelease(partialImageRef);
                 partialImageRef = CGBitmapContextCreateImage(bmContext);
+                
                 CGContextRelease(bmContext);
             }
             else {
+                
                 CGImageRelease(partialImageRef);
                 partialImageRef = nil;
             }
         }
         
+        CFRelease(imageSource);
+        
         if (partialImageRef) {
-            
             
             UIImage *image = [UIImage imageWithCGImage:partialImageRef];
             CGImageRelease(partialImageRef);
