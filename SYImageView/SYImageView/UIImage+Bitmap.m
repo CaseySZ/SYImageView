@@ -34,6 +34,24 @@
                                                      bytesPerRow,
                                                      colorspaceRef,
                                                      kCGBitmapByteOrderDefault|kCGImageAlphaNoneSkipLast|kCGImageAlphaPremultipliedLast);
+    if (contextRef == nil) { // 系统有时会抽风，版本兼容问题   CGBITMAP_CONTEXT_LOG_ERRORS
+        bytesPerPixel = 16;
+        bytesPerRow = bytesPerPixel * width;
+        contextRef =  CGBitmapContextCreate(NULL, width, height,
+                                            bitsPerComponent,
+                                            bytesPerRow,
+                                            colorspaceRef,
+                                            kCGBitmapByteOrderDefault|kCGImageAlphaNoneSkipLast|kCGImageAlphaPremultipliedLast);
+        if (contextRef == nil) {
+            bytesPerPixel = 32;
+            bytesPerRow = bytesPerPixel * width;
+            contextRef =  CGBitmapContextCreate(NULL, width, height,
+                                                bitsPerComponent,
+                                                bytesPerRow,
+                                                colorspaceRef,
+                                                kCGBitmapByteOrderDefault|kCGImageAlphaNoneSkipLast|kCGImageAlphaPremultipliedLast);
+        }
+    }
     
     CGContextDrawImage(contextRef, CGRectMake(0, 0, width, height), imageRef);
     CGImageRef backImageRef = CGBitmapContextCreateImage(contextRef);
